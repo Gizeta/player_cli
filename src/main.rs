@@ -4,7 +4,7 @@ mod reader;
 
 fn main() -> io::Result<()> {
   let device = rodio::default_output_device().unwrap();
-  let sink = rodio::Sink::new(&device);
+  let mut sink = rodio::Sink::new(&device);
 
   loop {
     let mut cmd = String::new();
@@ -16,7 +16,6 @@ fn main() -> io::Result<()> {
         io::stdin().read_line(&mut url)?;
         let buffer = reader::WebStreamReader::new(url.trim());
         let source = rodio::Decoder::new(buffer).unwrap();
-        sink.stop();
         sink.append(source);
       }
       "pause" => {
@@ -27,10 +26,9 @@ fn main() -> io::Result<()> {
       }
       "stop" => {
         sink.stop();
+        sink = rodio::Sink::new(&device);
       }
-      _ => {
-        println!("{}", &cmd);
-      }
+      _ => ()
     }
   }
 }
