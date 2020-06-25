@@ -28,6 +28,11 @@ fn main() -> io::Result<()> {
         sink.stop();
         sink = rodio::Sink::new(&device);
       }
+      "volume" => {
+        let mut vol = String::new();
+        io::stdin().read_line(&mut vol)?;
+        sink.set_volume(vol.trim_end().parse::<f32>().unwrap() / 100.0);
+      }
       _ => ()
     }
   }
